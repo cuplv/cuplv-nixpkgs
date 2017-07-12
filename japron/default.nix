@@ -1,4 +1,4 @@
-{ stdenv, fetchsvn, gmp, mpfr, ppl, openjdk, perl }:
+{ stdenv, fetchsvn, gmp, mpfr, ppl, jdk, perl }:
 
 stdenv.mkDerivation rec {
   name = "japron-${version}";
@@ -8,9 +8,14 @@ stdenv.mkDerivation rec {
     rev = version;
     sha256 = "134phk4wzrawrhixcphdlhd62h87h2hpq2yid91da35m7wqks27l";
   };
-  buildInputs = [ gmp mpfr ppl openjdk perl ];
+  buildInputs = [ gmp mpfr ppl jdk perl ];
 
   configurePhase = ''
     ./configure -prefix $out -no-cxx
+  '';
+
+  postInstall = ''
+    mkdir -p $out/share/java
+    cp $out/lib/*.jar $out/share/java
   '';
 }

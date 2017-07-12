@@ -2,6 +2,8 @@ self: super:
 
 {
 
-japron = super.callPackage ./japron {};
+cuanto = self.callPackage ./cuanto {};
+
+japron = self.callPackage ./japron {};
 
 }
