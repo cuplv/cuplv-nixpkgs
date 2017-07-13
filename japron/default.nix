@@ -10,12 +10,22 @@ stdenv.mkDerivation rec {
   };
   buildInputs = [ gmp mpfr ppl jdk perl ];
 
+  # Maybe we don't need "-absolute-dylibs"?
   configurePhase = ''
-    ./configure -prefix $out -no-cxx
+    ./configure -prefix $out -no-cxx -absolute-dylibs
   '';
 
   postInstall = ''
     mkdir -p $out/share/java
-    cp $out/lib/*.jar $out/share/java
+    cp $out/lib/*.jar $out/share/java   # */
+
+    # This library path has to be set so that the jars can find the
+    # .so files at runtime.  Setting it seems to obliterate the
+    # pre-existing LD_LIBRARY_PATH even though we try to
+    # append... TODO figure out how to avoid that
+    mkdir -p $out/nix-support
+    cat <<EOF > $out/nix-support/setup-hook
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$out/lib
+    EOF
   '';
 }
