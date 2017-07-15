@@ -1,0 +1,12 @@
+diff -rupN apron-r1097/configure apron-r1097-patched/configure
+--- apron-r1097/configure	2017-07-14 21:15:55.484600645 -0600
++++ apron-r1097-patched/configure	2017-07-14 21:28:54.516622619 -0600
+@@ -556,7 +556,7 @@ PPL_PREFIX = $ppl_prefix
+ GMP_PREFIX = $gmp_prefix
+ MPFR_PREFIX = $mpfr_prefix
+ 
+-JAVA_PREFIX = $apron_prefix/lib
++JAVA_PREFIX = $apron_prefix/share/java
+ JAVA      = $java
+ JAVAC     = $javac -Xlint:unchecked
+ JAVAH     = $javah

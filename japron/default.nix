@@ -10,22 +10,25 @@ stdenv.mkDerivation rec {
   };
   buildInputs = [ gmp mpfr ppl jdk perl ];
 
-  # Maybe we don't need "-absolute-dylibs"?
+  # Place jars in /share/java instead of /lib
+  patches = [ ./java-prefix.patch ];
+
+  # Maybe we don't need "-absolute-dylibs"?  Needs testing on Darwin.
   configurePhase = ''
     ./configure -prefix $out -no-cxx -absolute-dylibs
   '';
 
+  # Set either LD_LIBRARY_PATH (for Linux) or DYLD_LIBRARY_PATH (for
+  # Darwin).  This puts the .so libraries in JNI's search path.
   postInstall = ''
-    mkdir -p $out/share/java
-    cp $out/lib/*.jar $out/share/java   # */
-
-    # This library path has to be set so that the jars can find the
-    # .so files at runtime.  Setting it seems to obliterate the
-    # pre-existing LD_LIBRARY_PATH even though we try to
-    # append... TODO figure out how to avoid that
     mkdir -p $out/nix-support
     cat <<EOF > $out/nix-support/setup-hook
+  '' + (if stdenv.isDarwin then ''
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$out/lib
+  '' else ''
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$out/lib
+  '') + ''
     EOF
   '';
+
 }
