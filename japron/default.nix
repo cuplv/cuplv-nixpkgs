@@ -1,4 +1,4 @@
-{ stdenv, fetchsvn, gmp, mpfr, ppl, jdk, perl }:
+{ stdenv, fetchsvn, gmp, mpfr, ppl, jdk, perl, fixDylibs ? true }:
 
 stdenv.mkDerivation rec {
   name = "japron-${version}";
@@ -20,7 +20,7 @@ stdenv.mkDerivation rec {
 
   # Set either LD_LIBRARY_PATH (for Linux) or DYLD_LIBRARY_PATH (for
   # Darwin).  This puts the .so libraries in JNI's search path.
-  postInstall = ''
+  libpath = ''
     mkdir -p $out/nix-support
     cat <<EOF > $out/nix-support/setup-hook
   '' + (if stdenv.isDarwin then ''
@@ -30,5 +30,16 @@ stdenv.mkDerivation rec {
   '') + ''
     EOF
   '';
+
+  # Change installed libraries from *.so to *.dylib so that JNI can
+  # find them on Darwin.  (Needs testing...)
+  dylibs =
+    if (stdenv.isDarwin && fixDylibs)
+    then ''
+      sh ${./fix-dylibs.sh}
+    ''
+    else "";
+
+  postInstall = libpath + dylibs;
 
 }
