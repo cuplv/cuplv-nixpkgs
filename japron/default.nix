@@ -1,4 +1,4 @@
-{ stdenv, fetchsvn, gmp, mpfr, ppl, jdk, perl, fixDylibs ? true }:
+{ stdenv, fetchsvn, gmp, mpfr, ppl, jdk, perl }:
 
 stdenv.mkDerivation rec {
   name = "japron-${version}";
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
   # Change particular installed libraries from *.so to *.dylib so that
   # JNI can find them on Darwin.  (See comments in script for details)
   dylibs =
-    if (stdenv.isDarwin && fixDylibs)
+    if stdenv.isDarwin
     then ''
       sh ${./fix-dylibs.sh}
     ''
