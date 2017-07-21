@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# Create symlink to cuplv-nixpkgs in the nixpkgs overlays directory
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+OVERLAYS=$HOME/.config/nixpkgs/overlays
+
+mkdir -p $OVERLAYS
+ln -vs $DIR $OVERLAYS
