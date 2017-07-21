@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
     Abstract Interpretation";
 
     homepage = http://apron.cri.ensmp.fr/library/;
-    license = stdenv.lib.licenses.lgpl;
+    license = stdenv.lib.licenses.lgpl3;
     platforms = stdenv.lib.platforms.all;
   };
 
