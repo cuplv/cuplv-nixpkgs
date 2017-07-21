@@ -13,7 +13,6 @@ stdenv.mkDerivation rec {
   # Place jars in /share/java instead of /lib
   patches = [ ./java-prefix.patch ];
 
-  # Maybe we don't need "-absolute-dylibs"?  Needs testing on Darwin.
   configurePhase = ''
     ./configure -prefix $out -no-cxx -absolute-dylibs
   '';
@@ -31,8 +30,8 @@ stdenv.mkDerivation rec {
     EOF
   '';
 
-  # Change installed libraries from *.so to *.dylib so that JNI can
-  # find them on Darwin.  (Needs testing...)
+  # Change particular installed libraries from *.so to *.dylib so that
+  # JNI can find them on Darwin.  (See comments in script for details)
   dylibs =
     if (stdenv.isDarwin && fixDylibs)
     then ''
@@ -41,5 +40,17 @@ stdenv.mkDerivation rec {
     else "";
 
   postInstall = libpath + dylibs;
+
+  meta = {
+    description = "Java bindings for APRON";
+
+    longDescription = "Java bindings for APRON, a library dedicated to
+    the static analysis of the numerical variables of a program by
+    Abstract Interpretation";
+
+    homepage = http://apron.cri.ensmp.fr/library/;
+    license = stdenv.lib.licenses.lgpl;
+    platforms = stdenv.lib.platforms.all;
+  };
 
 }
